@@ -15,14 +15,33 @@ import { documentLink } from "./DocumentLink";
 export const readDocument: <T>(id: string) => Promise<T> = promisify<
   string,
   any
->((id, callback) => getContext().getCollection().readDocument(documentLink(id), callback));
+>((id, callback) => __.readDocument(documentLink(id), callback));
 
 /**
  * Promisified replace document function.
  */
-export const replaceDocument: <T>(
+export const replaceDocument: <T extends CosmosDocument>(
   id: string,
   document: T
 ) => Promise<{}> = promisify<string, {}, {}>((id, document, callback) =>
-  getContext().getCollection().replaceDocument(documentLink(id), document, callback)
+  __.replaceDocument(documentLink(id), document, callback)
 );
+
+/**
+ * Promisified replace document function.
+ */
+export const createDocument: <T extends CosmosDocument>(
+  document: T
+) => Promise<{}> = promisify<{}, {}>((document, callback) =>
+  __.createDocument(__.getSelfLink(), document, callback)
+);
+
+export const query: <T extends CosmosDocument>(
+  q: (r: IQueryResponse) => IQueryResponse,
+  options?: IFeedOptions
+) => Promise<T[]> = promisify<(r: IQueryResponse) => IQueryResponse, IFeedOptions, {}>(
+  (
+    q: (r: IQueryResponse) => IQueryResponse,
+    options: IFeedOptions,
+    callback
+  ) => q(__.chain()).value(options, callback))
