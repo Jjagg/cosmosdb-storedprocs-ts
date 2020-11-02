@@ -5,18 +5,15 @@ declare interface CosmosDocument {
   type?: string;
   /** Time to live in seconds for collections with TTL enabled */
   ttl?: number;
+  /** Key that identifies the logical partition the document lives in. */
+  partitionKey: string;
 }
 
 declare interface Slice extends CosmosDocument {
-  index: Number;
+  index: number;
 }
 
 declare interface FollowingSlice extends Slice {
-  user: string;
-  items: FollowInfo[];
-}
-
-declare interface FollowInfo {
   target: string;
-  since: string;
+  users: string[];
 }
