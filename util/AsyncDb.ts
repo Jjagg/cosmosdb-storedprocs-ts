@@ -18,6 +18,15 @@ export const readDocument: <T>(id: string) => Promise<T> = promisify<
 >((id, callback) => __.readDocument(documentLink(id), callback));
 
 /**
+ * Promisified create document function.
+ */
+export const createDocument: <T extends CosmosDocument>(
+  document: T
+) => Promise<{}> = promisify<{}, {}>((document, callback) =>
+  __.createDocument(__.getSelfLink(), document, callback)
+);
+
+/**
  * Promisified replace document function.
  */
 export const replaceDocument: <T extends CosmosDocument>(
@@ -28,15 +37,15 @@ export const replaceDocument: <T extends CosmosDocument>(
 );
 
 /**
- * Promisified replace document function.
+ * Promisified delete document function.
  */
-export const createDocument: <T extends CosmosDocument>(
-  document: T
-) => Promise<{}> = promisify<{}, {}>((document, callback) =>
-  __.createDocument(__.getSelfLink(), document, callback)
+export const deleteDocument: (
+  id: string
+) => Promise<{}> = promisify<string, {}>((id, callback) =>
+  __.deleteDocument(documentLink(id), callback)
 );
 
-export const query: <T extends CosmosDocument>(
+export const query: <T>(
   q: (r: IQueryResponse) => IQueryResponse,
   options?: IFeedOptions
 ) => Promise<T[]> = promisify<(r: IQueryResponse) => IQueryResponse, IFeedOptions, {}>(
